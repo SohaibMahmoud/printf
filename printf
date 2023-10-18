@@ -1,0 +1,47 @@
+#include <stdarg.h>
+#include <stdio.h>
+
+int _printf(const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    int count = 0;  // Count of characters printed
+
+    while (*format != '\0') {
+        if (*format == '%' && (*(format + 1) == 'c' || *(format + 1) == 's' || *(format + 1) == '%')) {
+            // Handle %c, %s, and %%
+            int arg = va_arg(args, int);  // Assuming char and int are compatible
+
+            if (*(format + 1) == 'c') {
+                putchar(arg);
+                count++;
+            } else if (*(format + 1) == 's') {
+                char *str = va_arg(args, char *);
+                while (*str) {
+                    putchar(*str);
+                    count++;
+                    str++;
+                }
+            } else if (*(format + 1) == '%') {
+                putchar('%');
+                count++;
+            }
+
+            format++;  // Move past the %c, %s, or %%
+        } else {
+            putchar(*format);
+            count++;
+        }
+
+        format++;
+    }
+
+    va_end(args);
+    return count;
+}
+
+int main() {
+    _printf("Hello, %s! My age is %d and my favorite letter is %c%%\n", "world", 30, 'A');
+    return 0;
+}
+
